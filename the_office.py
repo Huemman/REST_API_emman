@@ -7,16 +7,22 @@ from flask import flash, request
 
 
 def employee_table_format():
-    format = {
-                "Unsuccessfull": "CHECK FORMAT",
-                "birth_day": "YYYY-MM-DD",
-                "branch_id": "INT PRIMARY KEY",
-                "emp_id": "INTEGER",
-                "first_name": "Juan",
-                "last_name": "Dela Cruz",
-                "salary": "INTEGER",
-                "sex": "M or F"
-            }
+    format = [
+                {
+                    "json Format": "CHECK FORMAT",
+                    "REASONS": "Already exist in database or wrong Format"
+                },
+                {
+                        
+                        "birth_day": "YYYY-MM-DD",
+                        "branch_id": "INT PRIMARY KEY",
+                        "emp_id": "INTEGER",
+                        "first_name": "Juan",
+                        "last_name": "Dela Cruz",
+                        "salary": "INTEGER",
+                        "sex": "M or F"
+                }
+            ]
     response = jsonify(format)
     response.status_code = 400
     return response
