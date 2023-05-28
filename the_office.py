@@ -33,7 +33,7 @@ def auth(password):
     if password == '1234':
         url = {
             "methods_GET":
-                {
+                {   
                     "employee_table": "/employee",
                     "get_specific_employee": "/employee/<int:emp_id>"                    
                 },
