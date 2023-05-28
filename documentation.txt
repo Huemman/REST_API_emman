@@ -1,0 +1,31 @@
+Here are the description of each functions and their routes and how to properly use them
+
+1. '/' - this is the home page, when you first click or type in the link you'll see an instruction of what to do next.
+2. '/<string:password>' - this is where you'll type in your password. If your password is correct you'll see a dictionary of GET, POST, PUT, DELETE, and their corresponding url.
+3. '/employee' - this is where you'll see the content or values of the employee table from the mysql database.
+4. '/employee/<int:emp_id>' - here you'll need to specify an id, the format for typing the url is "/employee/100", this will fetch you the specific employee with the id and show you the details that employee has
+5. '/employee/add' - this is where you'll add employees to the table, the format for constructing the employee details is this is:
+{
+    
+    "birth_day": "YYYY-MM-DD",
+    "branch_id": "INT PRIMARY KEY",
+    "emp_id": "INTEGER",
+    "first_name": "Juan",
+    "last_name": "Dela Cruz",
+    "salary": "INTEGER",
+    "sex": "M or F"
+}
+6. '/employee/update' - this is where you'll change the details of an existing employee in the table, the format is:
+{
+    
+    "birth_day": "YYYY-MM-DD",
+    "branch_id": "INT PRIMARY KEY",
+    "emp_id": "INTEGER",
+    "first_name": "Juan",
+    "last_name": "Dela Cruz",
+    "salary": "INTEGER",
+    "sex": "M or F"
+}
+7. '/delete/<int:emp_id>' this is where you get to delete an employee from the table, the way this works is you have to specify the id at <int:emp_id>
+
+NOTE that in this type of programs you have to double check the spelling and formats of what you input for the reason that url is case sensitive and character vigilant meaning that if you put even a single white space at the wrong order you'll be met with an error so do be vigilant.
