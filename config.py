@@ -1,9 +1,19 @@
 from app import app
 from flaskext.mysql import MySQL
 
-mysql = MySQL()
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '1234'
-app.config['MYSQL_DATABASE_DB'] = 'the_office'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-mysql.init_app(app) 
+credentials = {
+    'username': 'root',
+    'pass': '1234',
+    'db': 'the_office',
+    'host': 'localhost'
+}
+
+try:
+    mysql = MySQL()
+    app.config['MYSQL_DATABASE_USER'] = credentials['username']
+    app.config['MYSQL_DATABASE_PASSWORD'] = credentials['pass']
+    app.config['MYSQL_DATABASE_DB'] = credentials['db']
+    app.config['MYSQL_DATABASE_HOST'] = credentials['host']
+    mysql.init_app(app) 
+except Exception as e: 
+    print(e)
