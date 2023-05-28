@@ -28,10 +28,37 @@ def employee_table_format():
     return response
 
 
+@app.route('/<string:password>')
+def auth(password):
+    if password == '1234':
+        url = {
+            "methods_GET":
+                {
+                    "employee_table": "/employee",
+                    "get_specific_employee": "/employee/<int:emp_id>"                    
+                },
+            "methods_POST":
+                {   
+                    "add_employee": "/employee/add"
+                },
+            "methods_PUT":
+                {   
+                    "update_employee_details": "/employee/update"
+                },
+            "methods_DELETE":
+                {
+                    "remove_employee": "/delete/<int:emp_id>"
+                }
+            }
+        return jsonify(url)
+    else:
+        return jsonify('wrong password')
+
+
 ##############################-READ Table-###############################
 
 
-@app.route('/')
+@app.route('/employee')
 def employee():
     try:
         conn = mysql.connect()
