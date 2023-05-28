@@ -28,6 +28,12 @@ def employee_table_format():
     return response
 
 
+@app.route('/')
+def homepage():
+    message = "type this to the link above /<string:password> to authenticate your password. If password is correct you'll see a list of url you can use"
+    return jsonify(message)
+
+
 @app.route('/<string:password>')
 def auth(password):
     if password == '1234':
@@ -73,6 +79,7 @@ def employee():
         cur.close() 
         conn.close()
         return response
+
 
 
 @app.route('/employee/<int:emp_id>')
