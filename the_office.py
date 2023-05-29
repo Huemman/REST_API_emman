@@ -38,7 +38,7 @@ def protected():
     if token == api_key:
         return jsonify({'message': 'Access granted'}), 200
     else:
-        return jsonify({'error': 'Invalid token'}), 401
+        return jsonify({'error': 'Invalid token/Forgot to input token'}), 401
 
 
 @app.route('/<string:password>')
@@ -99,7 +99,6 @@ def get_emp_id(emp_id):
     token = request.headers.get('Authorization')
     if token == api_key:
         try:
-            app.logger.debug("Fetch employee with ID: %s", emp_id)
             conn = mysql.connect()
             cur = conn.cursor(pymysql.cursors.DictCursor)
             data = f"SELECT * FROM employee WHERE emp_id = {emp_id}"
@@ -151,7 +150,7 @@ def add_employee():
                     cur.close()
                     conn.close() 
             else:
-                return jsonify('Not a method POST request')
+                return jsonify('Value cannot be empty, check your input')
         except Exception as e:
             print(e)
     else:
@@ -192,7 +191,7 @@ def update_table():
                     cur.close()
                     conn.close() 
             else:
-                return jsonify('Not a method PUT request')
+                return jsonify('Value cannot be empty, check your input')
         except Exception as e:
             print(e)
     else:
