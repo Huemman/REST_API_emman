@@ -2,7 +2,8 @@ import pymysql
 import secrets
 from app import app
 from config import mysql
-from flask import jsonify, request
+from flask import jsonify, request, Response
+from dicttoxml import dicttoxml
 
 #api_key = secrets.token_hex(16)
 api_key = "meh"
@@ -62,6 +63,10 @@ def auth(password):
             "methods_DELETE":
                 {
                     "remove_employee": "/delete/<int:emp_id>"
+                },
+            "Info":
+                {
+                    "message": "See documentation.txt for syntax and details"
                 }
             }
             return jsonify(url)
@@ -75,7 +80,7 @@ def auth(password):
 ##############################-READ Table-###############################
 
 
-@app.route('/employee')
+@app.route('/employee', methods=['GET'])
 def employee():
     token = request.headers.get('Authorization')
     if token == api_key:
@@ -84,19 +89,40 @@ def employee():
             cur = conn.cursor(pymysql.cursors.DictCursor)
             cur.execute("SELECT * FROM employee")
             rows = cur.fetchall()
-            response = jsonify(rows)
-            response.status_code = 200
+
+            format = request.args.get('format')
+            if format == 'xml':
+                xml_data = dicttoxml(rows, custom_root='employee', attr_type=False)
+                response = Response(xml_data, mimetype='application/xml')
+
+            
+            elif format == 'json':
+                response = jsonify(rows)
+                response.status_code = 200
+
+
+            elif format == None:
+                response = jsonify(rows)
+                response.status_code = 200
+
+
+            elif format != 'json' or format != 'xml':
+                response = jsonify("Invalid Format")
+                response.status_code = 400
+            
+            return response
+
         except Exception as e:
             print(e)
         finally:
             cur.close() 
             conn.close()
-            return response
+            
     else:
         return jsonify({'error': 'Invalid token'}), 401
 
 
-@app.route('/employee/<int:emp_id>')
+@app.route('/employee/<int:emp_id>', methods=['GET'])
 def get_emp_id(emp_id):
     token = request.headers.get('Authorization')
     if token == api_key:
@@ -107,14 +133,34 @@ def get_emp_id(emp_id):
             data = f"SELECT * FROM employee WHERE emp_id = {emp_id}"
             cur.execute(data)
             rows = cur.fetchall()
-            response = jsonify(rows)
-            response.status_code = 200
+            
+            format = request.args.get('format')
+            if format == 'xml':
+                xml_data = dicttoxml(rows, custom_root='<int:emp_id>', attr_type=False)
+                response = Response(xml_data, mimetype='application/xml')
+
+            
+            elif format == 'json':
+                response = jsonify(rows)
+                response.status_code = 200
+
+
+            elif format == None:
+                response = jsonify(rows)
+                response.status_code = 200
+
+
+            elif format != 'json' or format != 'xml':
+                response = jsonify("Invalid Format")
+                response.status_code = 400
+            
+            return response
+
         except Exception as e:
             print(e)
         finally:
             cur.close()
             conn.close()
-            return response
     else:
         return jsonify({'error': 'Invalid token'}), 401
 
