@@ -2,12 +2,10 @@ import pymysql
 import secrets
 from app import app
 from config import mysql
-from flask import jsonify, Request
-from flask import flash, request
+from flask import jsonify, request
 
-
-api_key = secrets.token_hex(16)
-
+#api_key = secrets.token_hex(16)
+api_key = "meh"
 print(api_key)
 
 
@@ -44,30 +42,33 @@ def protected():
 
 @app.route('/<string:password>')
 def auth(password):
-    token = request.headers.get('Authorization')
-    if token == api_key:
-        url = {
-        "methods_GET":
-            {   
-                "employee_table": "/employee",
-                "get_specific_employee": "/employee/<int:emp_id>"                    
-            },
-        "methods_POST":
-            {   
-                "add_employee": "/employee/add"
-            },
-        "methods_PUT":
-            {   
-                "update_employee_details": "/employee/update"
-            },
-        "methods_DELETE":
-            {
-                "remove_employee": "/delete/<int:emp_id>"
+    if password == '1234':
+        token = request.headers.get('Authorization')
+        if token == api_key:
+            url = {
+            "methods_GET":
+                {   
+                    "employee_table": "/employee",
+                    "get_specific_employee": "/employee/<int:emp_id>"                    
+                },
+            "methods_POST":
+                {   
+                    "add_employee": "/employee/add"
+                },
+            "methods_PUT":
+                {   
+                    "update_employee_details": "/employee/update"
+                },
+            "methods_DELETE":
+                {
+                    "remove_employee": "/delete/<int:emp_id>"
+                }
             }
-        }
-        return jsonify(url)
+            return jsonify(url)
+        else:
+            return jsonify({'error': 'Invalid token'}), 401
     else:
-        return jsonify({'error': 'Invalid token'}), 401
+        return jsonify({'error': 'wrong password'}), 401
     
 
 
