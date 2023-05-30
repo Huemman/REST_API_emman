@@ -89,7 +89,6 @@ def employee():
             cur = conn.cursor(pymysql.cursors.DictCursor)
             cur.execute("SELECT * FROM employee")
             rows = cur.fetchall()
-
             format = request.args.get('format')
             if format == 'xml':
                 xml_data = dicttoxml(rows, custom_root='employee', attr_type=False)
@@ -127,34 +126,40 @@ def get_emp_id(emp_id):
     token = request.headers.get('Authorization')
     if token == api_key:
         try:
-            app.logger.debug("Fetch employee with ID: %s", emp_id)
             conn = mysql.connect()
             cur = conn.cursor(pymysql.cursors.DictCursor)
             data = f"SELECT * FROM employee WHERE emp_id = {emp_id}"
-            cur.execute(data)
-            rows = cur.fetchall()
-            
-            format = request.args.get('format')
-            if format == 'xml':
-                xml_data = dicttoxml(rows, custom_root='<int:emp_id>', attr_type=False)
-                response = Response(xml_data, mimetype='application/xml')
+            checker = f"SELECT * FROM employee WHERE EXISTS (SELECT * FROM employee WHERE emp_id = {emp_id})"
+            cur.execute(checker)
+            exist = cur.fetchall() 
+            if exist:
+                cur.execute(data)
+                rows = cur.fetchall()
+                
+                format = request.args.get('format')
+                if format == 'xml':
+                    xml_data = dicttoxml(rows, custom_root='<employee>', attr_type=False)
+                    response = Response(xml_data, mimetype='application/xml')
 
-            
-            elif format == 'json':
-                response = jsonify(rows)
-                response.status_code = 200
+                
+                elif format == 'json':
+                    response = jsonify(rows)
+                    response.status_code = 200
 
 
-            elif format == None:
-                response = jsonify(rows)
-                response.status_code = 200
+                elif format == None:
+                    response = jsonify(rows)
+                    response.status_code = 200
 
 
-            elif format != 'json' or format != 'xml':
-                response = jsonify("Invalid Format")
-                response.status_code = 400
-            
-            return response
+                elif format != 'json' or format != 'xml':
+                    response = jsonify("Invalid Format")
+                    response.status_code = 400
+                
+                return response
+            else:
+                return jsonify('Employee not in Database') 
+                
 
         except Exception as e:
             print(e)
@@ -199,7 +204,7 @@ def add_employee():
                     cur.close()
                     conn.close() 
             else:
-                return jsonify('Not a method POST request')
+                return jsonify('Value cannot be Null or empty')
         except Exception as e:
             print(e)
     else:
@@ -208,8 +213,8 @@ def add_employee():
 ##############################-UPDATE table-###############################
 
 
-@app.route('/employee/update', methods=['PUT'])
-def update_table():     
+@app.route('/employee/update/<int:emp_id>', methods=['PUT'])
+def update_table(emp_id):     
     token = request.headers.get('Authorization')
     if token == api_key:
         try:
@@ -225,14 +230,20 @@ def update_table():
             if _emp_id and _first_name and _last_name and _birth_day and _sex and _salary and _branch_id and request.method == 'PUT':
                 employee = "UPDATE employee SET emp_id=%s, first_name=%s, last_name=%s, birth_day=%s, sex=%s, salary=%s, branch_id=%s WHERE emp_id=%s"
                 details = (_emp_id, _first_name, _last_name, _birth_day, _sex, _salary, _branch_id, _emp_id)                   
+                checker = f"SELECT * FROM employee WHERE EXISTS (SELECT * FROM employee WHERE emp_id = {emp_id})"
                 try:
                     conn = mysql.connect()
                     cur = conn.cursor(pymysql.cursors.DictCursor)
-                    cur.execute(employee, details)
-                    conn.commit()
-                    response = jsonify('table updated successfully!')
-                    response.status_code = 200
-                    return response
+                    cur.execute(checker)
+                    exist = cur.fetchall() 
+                    if exist:
+                        cur.execute(employee, details)
+                        conn.commit()
+                        response = jsonify('table updated successfully!')
+                        response.status_code = 200
+                        return response
+                    else:
+                        return jsonify('Employee not in Database')
                 except Exception as e:
                     print(e)
                     return employee_table_format()
@@ -240,7 +251,7 @@ def update_table():
                     cur.close()
                     conn.close() 
             else:
-                return jsonify('Not a method PUT request')
+                return jsonify('Value cannot be Null or empty')
         except Exception as e:
             print(e)
     else:
@@ -256,16 +267,22 @@ def delete_emp(emp_id):
     if token == api_key:
         try:
             conn = mysql.connect()
-            cursor = conn.cursor(pymysql.cursors.DictCursor)
-            cursor.execute("DELETE FROM employee WHERE emp_id =%s", (emp_id,))
-            conn.commit()
-            response = jsonify('Employee removed from table')
-            response.status_code = 200
-            return response
+            cur = conn.cursor(pymysql.cursors.DictCursor)
+            checker = f"SELECT * FROM employee WHERE EXISTS (SELECT * FROM employee WHERE emp_id = {emp_id})"
+            cur.execute(checker)
+            exist = cur.fetchall() 
+            if exist:
+                cur.execute("DELETE FROM employee WHERE emp_id =%s", (emp_id,))
+                conn.commit()
+                response = jsonify('Employee removed from table')
+                response.status_code = 200
+                return response
+            else:
+                return jsonify('Employee not in Database') 
         except Exception as e:
             print(e)
         finally:
-            cursor.close() 
+            cur.close() 
             conn.close() 
     else:
         return jsonify({'error': 'Invalid token'}), 401
