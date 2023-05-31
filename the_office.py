@@ -91,7 +91,7 @@ def employee():
             rows = cur.fetchall()
             format = request.args.get('format')
             if format == 'xml':
-                xml_data = dicttoxml(rows, custom_root='employees', attr_type=False)
+                xml_data = dicttoxml(rows, custom_root='employee', attr_type=False)
                 response = Response(xml_data, mimetype='application/xml')
 
             
@@ -138,7 +138,7 @@ def get_emp_id(emp_id):
                 
                 format = request.args.get('format')
                 if format == 'xml':
-                    xml_data = dicttoxml(rows, custom_root='employee', attr_type=False)
+                    xml_data = dicttoxml(rows, custom_root='<employee>', attr_type=False)
                     response = Response(xml_data, mimetype='application/xml')
 
                 

@@ -4,7 +4,6 @@ from app import app
 from config import mysql
 from flask import jsonify, request, Response
 from dicttoxml import dicttoxml
-from password import pswrd
 
 #api_key = secrets.token_hex(16)
 api_key = "meh"
@@ -44,35 +43,35 @@ def protected():
 
 @app.route('/<string:password>')
 def auth(password):
-    if password == pswrd():
-        url = {
-        "methods_GET":
-            {   
-                "employee_table": "/employee",
-                "get_specific_employee": "/employee/<int:emp_id>"                    
-            },
-        "methods_POST":
-            {   
-                "add_employee": "/employee/add"
-            },
-        "methods_PUT":
-            {   
-                "update_employee_details": "/employee/update"
-            },
-        "methods_DELETE":
-            {
-                "remove_employee": "/delete/<int:emp_id>"
-            },
-        "Info":
-            {
-                "message": "See documentation.txt for syntax and details"
-            },
-        "API_KEY":
-            {
-                "Authorization": f"{api_key}"
+    if password == '1234':
+        token = request.headers.get('Authorization')
+        if token == api_key:
+            url = {
+            "methods_GET":
+                {   
+                    "employee_table": "/employee",
+                    "get_specific_employee": "/employee/<int:emp_id>"                    
+                },
+            "methods_POST":
+                {   
+                    "add_employee": "/employee/add"
+                },
+            "methods_PUT":
+                {   
+                    "update_employee_details": "/employee/update"
+                },
+            "methods_DELETE":
+                {
+                    "remove_employee": "/delete/<int:emp_id>"
+                },
+            "Info":
+                {
+                    "message": "See documentation.txt for syntax and details"
+                }
             }
-        }
-        return jsonify(url)
+            return jsonify(url)
+        else:
+            return jsonify({'error': 'Invalid token'}), 401
     else:
         return jsonify({'error': 'wrong password'}), 401
     
