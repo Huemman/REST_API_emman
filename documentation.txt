@@ -2,7 +2,7 @@ Here are the description of each functions and their routes and how to properly 
 
 1. '/' - this is the home page, when you first click or type in the link you'll see an instruction of what to do next.
 
-2. '/<string:password>' - this is where you'll type in your password. If your password is correct you'll see a dictionary of GET, POST, PUT, DELETE, and their corresponding url.
+2. '/<string:password>' - this is where you'll type in your password. If your password is correct you'll see a dictionary of GET, POST, PUT, DELETE, and their corresponding url along with the Authorization api_key.
 
 3. '/employee' - this is where you'll see the content or values of the employee table in json format as deafult from the mysql database.
 3.1. '/employee?format=json' return the employee table values in json format

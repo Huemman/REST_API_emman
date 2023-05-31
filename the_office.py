@@ -1,13 +1,12 @@
 import pymysql
-import secrets
 from app import app
 from config import mysql
 from flask import jsonify, request, Response
 from dicttoxml import dicttoxml
-from password import pswrd
+from password import pswrd, api_key
 
-#api_key = secrets.token_hex(16)
-api_key = "meh"
+
+api_key = api_key()
 print(api_key)
 
 
