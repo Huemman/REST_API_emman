@@ -7,7 +7,6 @@ from password import pswrd, api_key
 
 
 api_key = api_key()
-print(api_key)
 
 
 def employee_table_format():
